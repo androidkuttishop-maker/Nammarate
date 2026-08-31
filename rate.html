@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>நம்ம ரேட் - SAR to INR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Madurai', sans-serif; }
+        .hidden-section { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 shadow-md sticky top-0 z-50 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <button id="back-btn" class="hidden text-lg font-bold px-1">⬅️</button>
+            <h1 id="app-title" class="text-lg font-bold cursor-pointer select-none">நம்ம <span class="text-yellow-300">ரேட்</span></h1>
+        </div>
+        <div class="flex space-x-1.5 text-xs font-bold">
+            <button id="nav-calc" class="bg-blue-700 px-2 py-1 rounded">🧮 கணக்கீடு</button>
+            <button id="nav-update" class="bg-blue-700 px-2 py-1 rounded">📤 ரேட் அனுப்பு</button>
+            <button id="nav-refresh" class="bg-blue-700 px-2 py-1 rounded" onclick="location.reload()">🔄</button>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-2 max-w-md space-y-3">
+
+        <!-- 1. Home Dashboard -->
+        <section id="home-section" class="space-y-3">
+            <h2 class="text-xs font-bold text-gray-700 uppercase">முதன்மைச் செயல்கள்</h2>
+            <div class="grid grid-cols-2 gap-2">
+                <button id="btn-view-rates" class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center">
+                    <span class="text-xl mb-1">📊</span>
+                    <span class="font-bold text-xs">ரேட்டுகளைப் பார்</span>
+                </button>
+                <button id="btn-calc" class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center">
+                    <span class="text-xl mb-1">🧮</span>
+                    <span class="font-bold text-xs">கணக்கிடு</span>
+                </button>
+                <button id="btn-update" class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center">
+                    <span class="text-xl mb-1">📤</span>
+                    <span class="font-bold text-xs">ரேட் அனுப்பு</span>
+                </button>
+                <a href="mailto:Androidkuttishop@gmail.com?subject=Feedback" class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center">
+                    <span class="text-xl mb-1">💬</span>
+                    <span class="font-bold text-xs">கருத்துகள்</span>
+                </a>
+                <button id="btn-share" class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center col-span-2">
+                    <span class="text-xl mb-1">🔗</span>
+                    <span class="font-bold text-xs">செயலியைப் பகிர்</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. View Rates -->
+        <section id="rates-section" class="hidden-section space-y-2">
+            <div class="bg-white p-2.5 rounded-lg shadow-sm border border-blue-100 flex justify-between items-center">
+                <div>
+                    <span class="text-[10px] text-gray-500 block">கூகுள் தற்போதைய ரேட் (SAR to INR)</span>
+                    <span id="google-live-rate" class="text-base font-bold text-blue-600">ஏற்றுகிறது...</span>
+                    <span id="google-last-time" class="text-[9px] text-gray-400 block">கடைசியாக மாற்றப்பட்டது: --:--</span>
+                </div>
+                <span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-0.5 rounded-full font-semibold">நேரலை</span>
+            </div>
+            <div id="full-rates-list" class="space-y-1"></div>
+        </section>
+
+        <!-- 3. Calculate Section -->
+        <section id="calculate-section" class="hidden-section space-y-2">
+            <div class="bg-white p-2.5 rounded-lg shadow-sm">
+                <label class="block text-[10px] text-gray-500 mb-1">தொகையை உள்ளிடவும் (SAR)</label>
+                <div class="flex items-center border rounded-md overflow-hidden">
+                    <input type="number" id="calc-input" value="1000" class="w-full p-1.5 text-lg font-bold outline-none">
+                    <span class="bg-blue-600 text-white px-3 py-2 text-xs font-bold">SAR</span>
+                </div>
+            </div>
+            <div id="calc-rates-list" class="space-y-1"></div>
+        </section>
+
+        <!-- 4. Update Rate Section (For Users) -->
+        <section id="update-section" class="hidden-section bg-white p-3 rounded-xl shadow-sm space-y-3">
+            <h2 class="font-bold text-gray-700 text-xs">📤 பணப் பரிமாற்ற ரேட்டை அனுப்புக (அனுமதிக்கு)</h2>
+            <div>
+                <label class="text-[10px] text-gray-500">வங்கி / மையம்</label>
+                <select id="update-bank" class="w-full border p-1.5 rounded mt-0.5 text-xs"></select>
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-500">புதிய ரேட்</label>
+                <input type="number" id="update-rate-val" step="0.001" placeholder="25.270" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-500">பரிமாற்றக் கட்டணம் (SAR)</label>
+                <input type="number" id="update-fee-val" step="0.01" value="15.00" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+            </div>
+            <button id="btn-submit-rate" class="w-full bg-blue-600 text-white py-2 rounded font-bold text-xs">அனுமதிக்குச் சமர்ப்பிக்கவும்</button>
+        </section>
+
+        <!-- 5. Admin Login Section -->
+        <section id="admin-login-section" class="hidden-section bg-white p-3 rounded-xl shadow-sm space-y-2">
+            <h2 class="font-bold text-gray-700 text-xs">🔐 நிர்வாகி உள்நுழைவு (Admin Login)</h2>
+            <div>
+                <label class="text-[10px] text-gray-500">மின்னஞ்சல் (Email)</label>
+                <input type="email" id="admin-email" placeholder="admin@nammarate.com" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-500">கடவுச்சொல் (Password)</label>
+                <input type="password" id="admin-password" placeholder="••••••••" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+            </div>
+            <div class="flex gap-2">
+                <button id="btn-firebase-login" class="w-full bg-blue-600 text-white py-1.5 rounded font-bold text-xs">உள்நுழை</button>
+                <button id="btn-cancel-login" class="w-full bg-gray-300 text-gray-700 py-1.5 rounded font-bold text-xs">ரத்து செய்</button>
+            </div>
+        </section>
+
+        <!-- 6. Admin Panel -->
+        <section id="admin-section" class="hidden-section bg-gray-900 text-white p-3 rounded-xl mt-2 space-y-3 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-0.5">
+                <h2 class="text-yellow-400 font-bold text-xs">⚙️ நிர்வாகி கட்டுப்பாட்டுப் பகுதி</h2>
+                <button id="btn-logout-admin" class="text-[10px] text-red-400 underline">வெளியேறு</button>
+            </div>
+            <div class="bg-gray-800 p-2.5 rounded-lg space-y-1.5">
+                <h3 class="text-[10px] font-bold text-gray-300">➕ புதிய வங்கியைச் சேர்</h3>
+                <div class="flex gap-2">
+                    <input type="text" id="new-bank-name" placeholder="வங்கியின் பெயர்" class="w-full p-1 text-xs text-black rounded">
+                    <button id="btn-add-bank" class="bg-blue-600 px-2.5 py-1 rounded text-xs font-bold">சேர்</button>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <h3 class="text-[10px] font-bold text-gray-300">🛠️ ரேட்டுகளை நிர்வகி</h3>
+                <div id="admin-banks-list" class="space-y-1 text-xs max-h-36 overflow-y-auto pr-1"></div>
+            </div>
+            <div class="space-y-1.5 pb-1">
+                <h3 class="text-[10px] font-bold text-gray-300">📥 பயனர்களிடமிருந்து பெறப்பட்ட கோரிக்கைகள்</h3>
+                <div id="admin-pending-list" class="space-y-1 text-xs">
+                    <p class="text-gray-400 text-[10px]">நிலுவையில் உள்ள கோரிக்கைகள் எதுவும் இல்லை.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Firebase SDK v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsfB2U4KjGW18cpCkeyZzmQOZSF6sy6j4",
+            authDomain: "nammarate-c06eb.firebaseapp.com",
+            databaseURL: "https://nammarate-c06eb-default-rtdb.firebaseio.com",
+            projectId: "nammarate-c06eb",
+            storageBucket: "nammarate-c06eb.firebasestorage.app",
+            messagingSenderId: "901213476464",
+            appId: "1:901213476464:web:be54d407586119078586b5"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        let remittanceDataObj = {};
+        let pendingSubmissions = [];
+
+        function formatTime(timestamp) {
+            if (!timestamp) return "இப்போது";
+            const date = new Date(timestamp);
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${date.getDate()}/${date.getMonth() + 1} - ${hours}:${minutes}`;
+        }
+
+        async function fetchGoogleRate() {
+            try {
+                const response = await fetch('https://open.er-api.com/v6/latest/SAR', { cache: 'no-store' });
+                const data = await response.json();
+                if (data && data.rates && data.rates.INR) {
+                    document.getElementById('google-live-rate').innerText = '₹ ' + data.rates.INR.toFixed(3);
+                    document.getElementById('google-last-time').innerText = 'கடைசியாக மாற்றப்பட்டது: ' + formatTime(Date.now());
+                } else {
+                    throw new Error('Invalid data');
+                }
+            } catch (e) {
+                try {
+                    const backupRes = await fetch('https://api.exchangerate-api.com/v4/latest/SAR', { cache: 'no-store' });
+                    const backupData = await backupRes.json();
+                    if (backupData && backupData.rates && backupData.rates.INR) {
+                        document.getElementById('google-live-rate').innerText = '₹ ' + backupData.rates.INR.toFixed(3);
+                        document.getElementById('google-last-time').innerText = 'கடைசியாக மாற்றப்பட்டது: ' + formatTime(Date.now());
+                    } else {
+                        document.getElementById('google-live-rate').innerText = '₹ 25.190';
+                    }
+                } catch (err) {
+                    document.getElementById('google-live-rate').innerText = '₹ 25.190';
+                }
+            }
+        }
+        fetchGoogleRate();
+
+        db.ref('remittanceData').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                remittanceDataObj = data;
+            } else {
+                remittanceDataObj = {
+                    "Enjaz": { name: "Enjaz", timestamp: Date.now() - 3600000, rate: 25.270, fee: 15.00 },
+                    "Al_Amoudi": { name: "Al Amoudi", timestamp: Date.now() - 61200000, rate: 25.270, fee: 12.00 },
+                    "NEO_SNB": { name: "NEO - SNB", timestamp: Date.now() - 10800000, rate: 25.260, fee: 15.00 },
+                    "Alinma_Bank": { name: "Alinma Bank", timestamp: Date.now() - 86400000, rate: 25.250, fee: 10.00 },
+                    "STC_Pay": { name: "STC Pay", timestamp: Date.now() - 18000000, rate: 25.200, fee: 17.25 }
+                };
+                db.ref('remittanceData').set(remittanceDataObj);
+            }
+            renderRates();
+            populateBankDropdown();
+            renderAdminBanks();
+        });
+
+        db.ref('pendingSubmissions').on('value', (snapshot) => {
+            const data = snapshot.val();
+            pendingSubmissions = [];
+            if (data) {
+                Object.keys(data).forEach(k => {
+                    pendingSubmissions.push({ id: k, ...data[k] });
+                });
+            }
+            renderAdminPending();
+        });
+
+        document.getElementById('nav-calc').onclick = () => showSection('calculate-section');
+        document.getElementById('nav-update').onclick = () => { showSection('update-section'); populateBankDropdown(); };
+        document.getElementById('back-btn').onclick = showHome;
+        document.getElementById('btn-view-rates').onclick = () => showSection('rates-section');
+        document.getElementById('btn-calc').onclick = () => showSection('calculate-section');
+        document.getElementById('btn-update').onclick = () => { showSection('update-section'); populateBankDropdown(); };
+        document.getElementById('btn-share').onclick = () => {
+            if (navigator.share) navigator.share({ title: 'நம்ம ரேட்', url: window.location.href });
+            else alert("இணைப்பு நகலெடுக்கப்பட்டது!");
+        };
+        document.getElementById('calc-input').oninput = calculateRates;
+        document.getElementById('btn-submit-rate').onclick = submitNewRate;
+        document.getElementById('btn-add-bank').onclick = addNewBank;
+        document.getElementById('btn-cancel-login').onclick = showHome;
+        document.getElementById('btn-logout-admin').onclick = () => auth.signOut().then(() => { alert("வெளியேறிவிட்டீர்கள்!"); showHome(); });
+
+        document.getElementById('btn-firebase-login').onclick = () => {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    document.getElementById('admin-login-section').classList.add('hidden-section');
+                    document.getElementById('admin-section').classList.remove('hidden-section');
+                    alert("உள்நுழைவு வெற்றி!");
+                })
+                .catch(err => alert("உள்நுழைவு தோல்வியடைந்தது: " + err.message));
+        };
+
+        let tapCount = 0;
+        let tapTimer = null;
+        document.getElementById('app-title').onclick = () => {
+            tapCount++;
+            clearTimeout(tapTimer);
+            if (tapCount === 3) {
+                tapCount = 0;
+                if (auth.currentUser) {
+                    document.getElementById('admin-section').classList.remove('hidden-section');
+                    document.getElementById('home-section').classList.add('hidden-section');
+                    document.getElementById('back-btn').classList.remove('hidden');
+                } else {
+                    showSection('admin-login-section');
+                }
+            } else {
+                tapTimer = setTimeout(() => { tapCount = 0; }, 600);
+            }
+        };
+
+        function showSection(id) {
+            ['home-section', 'rates-section', 'calculate-section', 'update-section', 'admin-login-section', 'admin-section'].forEach(sec => {
+                document.getElementById(sec).classList.add('hidden-section');
+            });
+            document.getElementById(id).classList.remove('hidden-section');
+            document.getElementById('back-btn').classList.remove('hidden');
+            if (id === 'rates-section') {
+                fetchGoogleRate();
+                renderRates();
+            }
+            if (id === 'calculate-section') calculateRates();
+        }
+
+        function showHome() {
+            ['rates-section', 'calculate-section', 'update-section', 'admin-login-section', 'admin-section'].forEach(sec => {
+                document.getElementById(sec).classList.add('hidden-section');
+            });
+            document.getElementById('home-section').classList.remove('hidden-section');
+            document.getElementById('back-btn').classList.add('hidden');
+        }
+
+        function populateBankDropdown() {
+            const sel = document.getElementById('update-bank');
+            if (!sel) return;
+            sel.innerHTML = '';
+            Object.keys(remittanceDataObj).forEach(k => {
+                const item = remittanceDataObj[k];
+                if (item && item.name) {
+                    sel.innerHTML += `<option value="${item.name}">${item.name}</option>`;
+                }
+            });
+        }
+
+        function addNewBank() {
+            const name = document.getElementById('new-bank-name').value.trim();
+            if (!name) return alert("வங்கியின் பெயரை உள்ளிடவும்!");
+            const key = name.replace(/[^a-zA-Z0-9]/g, '_');
+            db.ref('remittanceData/' + key).set({ name, rate: 25.000, fee: 15.00, timestamp: Date.now() });
+            document.getElementById('new-bank-name').value = '';
+            alert("வங்கி வெற்றிகரமாக சேர்க்கப்பட்டது!");
+        }
+
+        function getSorted() {
+            return Object.values(remittanceDataObj).sort((a, b) => b.rate - a.rate);
+        }
+
+        function renderRates() {
+            const arr = getSorted();
+            const list = document.getElementById('full-rates-list');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            list.innerHTML += `<div class="bg-gray-800 text-white text-[10px] font-bold p-1.5 rounded-t flex justify-between">
+                <span>வங்கி / மையம்</span>
+                <span>நேரம் / கட்டணம்</span>
+                <span>ரேட்</span>
+            </div>`;
+
+            arr.forEach((item, idx) => {
+                const bg = idx < 2 ? 'bg-green-600' : idx >= arr.length - 2 ? 'bg-amber-700' : 'bg-emerald-700';
+                const timeStr = formatTime(item.timestamp);
+                list.innerHTML += `<div class="${bg} text-white p-1.5 mb-1 rounded flex justify-between items-center text-xs shadow-sm">
+                    <div class="w-2/5 truncate">
+                        <span class="font-bold block truncate text-[11px]">${item.name}</span>
+                        <span class="text-[9px] opacity-80">கட்டணம்: ${item.fee} SAR</span>
+                    </div>
+                    <div class="w-2/5 text-center">
+                        <span class="text-[9px] opacity-90 block">${timeStr}</span>
+                    </div>
+                    <div class="w-1/5 text-right">
+                        <span class="font-bold text-xs">₹ ${item.rate.toFixed(3)}</span>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function calculateRates() {
+            const arr = getSorted();
+            const amt = parseFloat(document.getElementById('calc-input').value) || 0;
+            const list = document.getElementById('calc-rates-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            list.innerHTML += `<div class="bg-gray-800 text-white text-[10px] font-bold p-1.5 rounded-t flex justify-between">
+                <span>வங்கி / மையம்</span>
+                <span>கட்டணம்</span>
+                <span>மொத்த INR</span>
+            </div>`;
+
+            arr.forEach((item, idx) => {
+                const bg = idx < 2 ? 'bg-green-600' : idx >= arr.length - 2 ? 'bg-amber-700' : 'bg-emerald-700';
+                const eff = amt - item.fee;
+                const total = eff > 0 ? (eff * item.rate).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00";
+                
+                list.innerHTML += `<div class="${bg} text-white p-1.5 mb-1 rounded flex justify-between items-center text-xs shadow-sm">
+                    <div class="w-2/5 truncate">
+                        <span class="font-bold block truncate text-[11px]">${item.name}</span>
+                        <span class="text-[9px] opacity-80">ரேட்: ${item.rate.toFixed(3)}</span>
+                    </div>
+                    <div class="w-1/5 text-center">
+                        <span class="text-[9px]">${item.fee} SAR</span>
+                    </div>
+                    <div class="w-2/5 text-right">
+                        <span class="font-bold text-xs">₹ ${total}</span>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function submitNewRate() {
+            const bankSelect = document.getElementById('update-bank');
+            const bank = bankSelect ? bankSelect.value : '';
+            const rate = parseFloat(document.getElementById('update-rate-val').value);
+            const fee = parseFloat(document.getElementById('update-fee-val').value) || 0;
+            
+            if (!bank) return alert("தயவுசெய்து வங்கியைத் தேர்ந்தெடுக்கவும்!");
+            if (!rate) return alert("சரியான ரேட்டை உள்ளிடவும்!");
+            
+            db.ref('pendingSubmissions').push({ bank, rate, fee, timestamp: Date.now() });
+            document.getElementById('update-rate-val').value = '';
+            alert("ரேட் நிர்வாகி ஒப்புதலுக்காக வெற்றிகரமாக அனுப்பப்பட்டது!");
+            showHome();
+        }
+
+        function renderAdminBanks() {
+            const box = document.getElementById('admin-banks-list');
+            if (!box) return;
+            box.innerHTML = '';
+            Object.keys(remittanceDataObj).forEach(k => {
+                const item = remittanceDataObj[k];
+                box.innerHTML += `<div class="bg-gray-800 p-1.5 rounded space-y-1 border border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-yellow-300 font-bold text-[11px]">${item.name}</span>
+                        <span class="text-[9px] text-gray-400">(${formatTime(item.timestamp)})</span>
+                    </div>
+                    <div class="flex gap-1.5 items-center">
+                        <input type="number" step="0.001" id="rate_${k}" value="${item.rate}" disabled class="w-1/2 p-1 text-black bg-gray-200 rounded text-xs">
+                        <input type="number" step="0.01" id="fee_${k}" value="${item.fee}" disabled class="w-1/3 p-1 text-black bg-gray-200 rounded text-xs">
+                        <button onclick="window.enableEdit('${k}')" id="ed_${k}" class="bg-yellow-500 text-black px-1.5 py-0.5 rounded font-bold text-[10px]">மாற்று</button>
+                        <button onclick="window.saveEdit('${k}')" id="sv_${k}" class="hidden bg-blue-600 text-white px-1.5 py-0.5 rounded font-bold text-[10px]">சேமி</button>
+                        <button onclick="window.delBank('${k}')" class="bg-red-600 text-white px-1.5 py-0.5 rounded font-bold text-[10px]">நீக்கு</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        window.enableEdit = k => {
+            document.getElementById(`rate_${k}`).disabled = false;
+            document.getElementById(`rate_${k}`).classList.replace('bg-gray-200', 'bg-white');
+            document.getElementById(`fee_${k}`).disabled = false;
+            document.getElementById(`fee_${k}`).classList.replace('bg-gray-200', 'bg-white');
+            document.getElementById(`ed_${k}`).classList.add('hidden');
+            document.getElementById(`sv_${k}`).classList.remove('hidden');
+        };
+
+        window.saveEdit = k => {
+            const rate = parseFloat(document.getElementById(`rate_${k}`).value);
+            const fee = parseFloat(document.getElementById(`fee_${k}`).value);
+            db.ref('remittanceData/' + k).update({ rate, fee, timestamp: Date.now() });
+            alert("வெற்றிகரமாக மாற்றப்பட்டது!");
+            renderAdminBanks();
+        };
+
+        window.delBank = k => {
+            if (confirm("இந்த வங்கியை நீக்க விரும்புகிறீர்களா?")) db.ref('remittanceData/' + k).remove();
+        };
+
+        function renderAdminPending() {
+            const box = document.getElementById('admin-pending-list');
+            if (!box) return;
+            if (pendingSubmissions.length === 0) {
+                box.innerHTML = '<p class="text-gray-400 text-[10px]">நிலுவையில் உள்ள கோரிக்கைகள் எதுவும் இல்லை.</p>';
+                return;
+            }
+            box.innerHTML = '';
+            pendingSubmissions.forEach(sub => {
+                box.innerHTML += `<div class="flex justify-between items-center bg-gray-800 p-1.5 rounded text-xs">
+                    <div>
+                        <span>${sub.bank}: <b>₹ ${sub.rate}</b> (கட்டணம்: ${sub.fee})</span>
+                        <div class="text-[9px] text-gray-400">அனுப்பப்பட்டது: ${formatTime(sub.timestamp)}</div>
+                    </div>
+                    <div class="space-x-1">
+                        <button onclick="window.approveSub('${sub.id}', '${sub.bank}', ${sub.rate}, ${sub.fee})" class="bg-green-600 px-1.5 py-0.5 rounded font-bold text-[10px] text-white">ஏற்றுக்கொள்</button>
+                        <button onclick="window.rejectSub('${sub.id}')" class="bg-red-600 px-1.5 py-0.5 rounded font-bold text-[10px] text-white">X</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        window.approveSub = (id, bankName, rate, fee) => {
+            let foundKey = "";
+            Object.keys(remittanceDataObj).forEach(k => {
+                if (remittanceDataObj[k].name === bankName) {
+                    foundKey = k;
+                }
+            });
+            if (!foundKey) {
+                foundKey = bankName.replace(/[^a-zA-Z0-9]/g, '_');
+            }
+            db.ref('remittanceData/' + foundKey).update({ name: bankName, rate, fee, timestamp: Date.now() });
+            db.ref('pendingSubmissions/' + id).remove();
+            alert("ரேட் ஏற்கப்பட்டு, லைவ் ஆக மாற்றப்பட்டது!");
+        };
+
+        window.rejectSub = id => {
+            db.ref('pendingSubmissions/' + id).remove();
+            alert("கோரிக்கை நிராகரிக்கப்பட்டது.");
+        };
+    </script>
+</body>
+</html>
