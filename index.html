@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Namma Rate - SAR to INR</title>
+    <title>namma Rate - SAR to INR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden-section { display: none; }
@@ -24,7 +24,7 @@
     <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 shadow-md sticky top-0 z-50 flex justify-between items-center">
         <div class="flex items-center space-x-2">
             <button id="back-btn" class="hidden text-lg font-bold px-1">&#8592;</button>
-            <h1 id="app-title" class="text-lg font-bold cursor-pointer select-none">Namma <span class="text-yellow-300">Rate</span></h1>
+            <h1 id="app-title" class="text-lg font-bold cursor-pointer select-none">நம்ம <span class="text-yellow-300">Rate</span></h1>
         </div>
         <div class="flex space-x-1.5 text-xs font-bold">
             <button id="nav-calc" class="bg-blue-700 px-2 py-1 rounded">Calculate</button>
@@ -60,7 +60,7 @@
             <!-- Live Rate moved to Home Dashboard (Below Share App) -->
             <div class="bg-white p-2.5 rounded-lg shadow-sm border border-blue-100 flex justify-between items-center">
                 <div>
-                    <span class="text-[10px] text-gray-500 block">Live Exchange Rate (SAR to INR)</span>
+                    <span class="text-[10px] text-gray-500 block">google Live Exchange Rate (SAR to INR)</span>
                     <span id="google-live-rate" class="text-sm font-bold text-blue-600">Please wait, live rate update...</span>
                     <span id="google-last-time" class="text-[9px] text-gray-400 block">Last update: Fetching...</span>
                 </div>
@@ -121,7 +121,7 @@
 
         <!-- 4. Update Rate Section -->
         <section id="update-section" class="hidden-section bg-white p-3 rounded-xl shadow-sm space-y-3">
-            <h2 class="font-bold text-gray-700 text-xs">Submit New Rate</h2>
+            <h2 class="font-bold text-gray-700 text-xs">Submit New Rate Request</h2>
             <div>
                 <label class="text-[10px] text-gray-500">Remittance Center / Bank</label>
                 <select id="update-bank" class="w-full border p-1.5 rounded mt-0.5 text-xs"></select>
@@ -447,8 +447,8 @@
             list.innerHTML = '';
             
             list.innerHTML += `<div class="bg-gray-800 text-white text-[10px] font-bold p-1.5 rounded-t flex justify-between">
-                <span>Remit. Center</span>
-                <span>Time / Fee</span>
+                <span>Remit. Center / Fee</span>
+                <span>Upt At </span>
                 <span>Rate</span>
             </div>`;
 
@@ -479,8 +479,8 @@
 
             const rightHeader = calcMode === 'SAR' ? 'Total INR' : 'Required SAR';
             list.innerHTML += `<div class="bg-gray-800 text-white text-[10px] font-bold p-1.5 rounded-t flex justify-between">
-                <span>Remit. Center</span>
-                <span>Rate & Fee</span>
+                <span>Remit. Center & Rate</span>
+                <span>Fee</span>
                 <span>${rightHeader}</span>
             </div>`;
 
