@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>namma Rate - SAR to INR</title>
+    <title>Namma Rate - SAR to INR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden-section { display: none; }
@@ -15,7 +15,7 @@
     <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 shadow-md sticky top-0 z-50 flex justify-between items-center">
         <div class="flex items-center space-x-2">
             <button id="back-btn" class="hidden text-lg font-bold px-1">&#8592;</button>
-            <h1 id="app-title" class="text-lg font-bold cursor-pointer select-none">நம்ம <span class="text-yellow-300">Rate</span></h1>
+            <h1 id="app-title" class="text-lg font-bold cursor-pointer select-none">Namma <span class="text-yellow-300">Rate</span></h1>
         </div>
         <div class="flex space-x-1.5 text-xs font-bold">
             <button id="nav-calc" class="bg-blue-700 px-2 py-1 rounded">Calculate</button>
@@ -49,7 +49,7 @@
                     <span class="font-bold text-xs">Share App</span>
                 </button>
                 <button id="btn-rate-alert" class="bg-blue-50 text-blue-600 p-3 rounded-lg shadow-sm border border-blue-200 text-center flex items-center justify-center">
-                    <span class="font-bold text-xs">🔔 Rate Alerts</span>
+                    <span class="font-bold text-xs">ðŸ”” Rate Alerts</span>
                 </button>
             </div>
 
@@ -119,7 +119,7 @@
             <button id="btn-submit-rate" class="w-full bg-blue-600 text-white py-2 rounded font-bold text-xs">Submit Rate</button>
         </section>
 
-        <!-- 5. Rate Alert Section (New) -->
+        <!-- 5. Rate Alert Section -->
         <section id="rate-alert-section" class="hidden-section bg-white p-3 rounded-xl shadow-sm space-y-3">
             <h2 class="font-bold text-gray-700 text-xs">Set Rate Alert</h2>
             <p class="text-[10px] text-gray-500">Get notified when rates change for all banks or a specific bank.</p>
@@ -146,7 +146,7 @@
             </div>
             <div>
                 <label class="text-[10px] text-gray-500">Password</label>
-                <input type="password" id="admin-password" placeholder="••••••••" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+                <input type="password" id="admin-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" class="w-full border p-1.5 rounded mt-0.5 text-xs">
             </div>
             <div class="flex gap-2">
                 <button id="btn-firebase-login" class="w-full bg-blue-600 text-white py-1.5 rounded font-bold text-xs">Login</button>
@@ -155,26 +155,29 @@
         </section>
 
         <!-- 7. Admin Panel -->
-        <section id="admin-section" class="hidden-section bg-gray-900 text-white p-3 rounded-xl mt-2 space-y-3 max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-0.5">
-                <h2 class="text-yellow-400 font-bold text-xs">Admin Control Panel</h2>
-                <button id="btn-logout-admin" class="text-[10px] text-red-400 underline">Logout</button>
+        <section id="admin-section" class="hidden-section bg-gray-900 text-white p-4 rounded-xl mt-2 space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                <h2 class="text-yellow-400 font-bold text-sm tracking-wide">Admin Control Panel</h2>
+                <button id="btn-logout-admin" class="text-xs text-red-400 font-semibold underline px-2 py-1 bg-red-950/40 rounded">Logout</button>
             </div>
-            <div class="bg-gray-800 p-2.5 rounded-lg space-y-1.5">
-                <h3 class="text-[10px] font-bold text-gray-300">Add New Bank</h3>
+            
+            <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
+                <h3 class="text-xs font-bold text-gray-200 uppercase tracking-wider">Add New Bank</h3>
                 <div class="flex gap-2">
-                    <input type="text" id="new-bank-name" placeholder="Bank Name" class="w-full p-1 text-xs text-black rounded">
-                    <button id="btn-add-bank" class="bg-blue-600 px-2.5 py-1 rounded text-xs font-bold">Add</button>
+                    <input type="text" id="new-bank-name" placeholder="Enter Bank Name" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
+                    <button id="btn-add-bank" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-xs font-bold shadow">Add</button>
                 </div>
             </div>
-            <div class="space-y-1.5">
-                <h3 class="text-[10px] font-bold text-gray-300">Manage Rates</h3>
-                <div id="admin-banks-list" class="space-y-1 text-xs max-h-36 overflow-y-auto pr-1"></div>
+
+            <div class="space-y-2">
+                <h3 class="text-xs font-bold text-gray-200 uppercase tracking-wider">Manage Rates</h3>
+                <div id="admin-banks-list" class="space-y-2 text-xs max-h-72 overflow-y-auto pr-1"></div>
             </div>
-            <div class="space-y-1.5 pb-1">
-                <h3 class="text-[10px] font-bold text-gray-300">Pending Submissions</h3>
-                <div id="admin-pending-list" class="space-y-1 text-xs">
-                    <p class="text-gray-400 text-[10px]">No pending submissions.</p>
+
+            <div class="space-y-2 pt-1">
+                <h3 class="text-xs font-bold text-gray-200 uppercase tracking-wider">Pending Submissions</h3>
+                <div id="admin-pending-list" class="space-y-2 text-xs">
+                    <p class="text-gray-400 text-xs">No pending submissions.</p>
                 </div>
             </div>
         </section>
@@ -187,8 +190,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
-        // ======= UNGALODA ORIGINAL FIREBASE CONFIG-AI INGE PODUNGA =======
-                const firebaseConfig = {
+        // ======= UNGALODA ORIGINAL FIREBASE CONFIG-AI INGE PODUNGA 
+        const firebaseConfig = {
   apiKey: "AIzaSyCsfB2U4KjGW18cpCkeyZzmQOZSF6sy6j4",
   authDomain: "nammarate-c06eb.firebaseapp.com",
   databaseURL: "https://nammarate-c06eb-default-rtdb.firebaseio.com",
@@ -245,7 +248,7 @@
                 
                 if (data && data.rate) {
                     liveSARtoINR = data.rate;
-                    if (rateElem) rateElem.innerText = '₹ ' + liveSARtoINR.toFixed(3);
+                    if (rateElem) rateElem.innerText = 'Rs. ' + liveSARtoINR.toFixed(3);
                     if (timeElem) timeElem.innerText = 'Last update: ' + formatTimeAgo(Date.now());
                     renderRates();
                 } else {
@@ -259,7 +262,6 @@
         
         fetchGoogleRate();
 
-        // Fetching data purely from Firebase Realtime Database
         db.ref('remittanceData').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -270,6 +272,7 @@
             renderRates();
             populateBankDropdown();
             renderAdminBanks();
+            checkRateAlerts();
         });
 
         db.ref('pendingSubmissions').on('value', (snapshot) => {
@@ -283,7 +286,6 @@
             renderAdminPending();
         });
 
-        // View Rates Toggle Listeners
         document.getElementById('btn-mode-with-fees').onclick = () => {
             viewFeesMode = 'WITH';
             document.getElementById('btn-mode-with-fees').className = "py-1.5 px-2 text-xs font-bold rounded bg-blue-600 text-white transition-all";
@@ -324,9 +326,13 @@
         document.getElementById('btn-view-rates').onclick = () => showSection('rates-section');
         document.getElementById('btn-calc').onclick = () => showSection('calculate-section');
         document.getElementById('btn-update').onclick = () => { showSection('update-section'); populateBankDropdown(); };
-        document.getElementById('btn-rate-alert').onclick = () => { showSection('rate-alert-section'); populateAlertDropdown(); loadAlerts(); };
+        document.getElementById('btn-rate-alert').onclick = () => { 
+            showSection('rate-alert-section'); 
+            populateAlertDropdown(); 
+            loadAlerts(); 
+            requestNotificationPermission();
+        };
         
-        // Fixed Share Button
         document.getElementById('btn-share').onclick = () => {
             const shareText = "Check live Saudi Riyal (SAR to INR) transfer rates: " + window.location.href;
             if (navigator.share) {
@@ -438,7 +444,6 @@
             alert("Bank added successfully!");
         }
 
-        // View Rates Sorting Logic (Crown removed, Best Price displayed for 1st place without deleting/changing original data)
         function renderRates() {
             const list = document.getElementById('full-rates-list');
             if (!list) return;
@@ -449,10 +454,8 @@
                     const baseSAR = 1000;
                     const effA = baseSAR - a.fee;
                     const totalA = effA > 0 ? effA * a.rate : 0;
-                    
                     const effB = baseSAR - b.fee;
                     const totalB = effB > 0 ? effB * b.rate : 0;
-                    
                     return totalB - totalA;
                 } else {
                     return b.rate - a.rate;
@@ -468,8 +471,6 @@
             arr.forEach((item, idx) => {
                 const bg = idx === 0 ? 'bg-green-600' : idx < 2 ? 'bg-green-600' : idx >= arr.length - 2 ? 'bg-amber-700' : 'bg-emerald-700';
                 const timeStr = formatTimeAgo(item.timestamp);
-                
-                // 1st place gets "Best Price" badge instead of crown, data remains completely safe
                 const bankDisplay = idx === 0 ? `${item.name} <span class="bg-yellow-300 text-black text-[9px] px-1 rounded font-bold ml-1">Best Price</span>` : item.name;
 
                 list.innerHTML += `<div class="${bg} text-white p-1.5 mb-1 rounded flex justify-between items-center text-xs shadow-sm">
@@ -481,7 +482,7 @@
                         <span class="text-[9px] opacity-90 block">${timeStr}</span>
                     </div>
                     <div class="w-1/5 text-right">
-                        <span class="font-bold text-xs">₹ ${item.rate.toFixed(3)}</span>
+                        <span class="font-bold text-xs">Rs. ${item.rate.toFixed(3)}</span>
                     </div>
                 </div>`;
             });
@@ -522,7 +523,7 @@
                 if (calcMode === 'SAR') {
                     const effSAR = inputVal - item.fee;
                     const totalINR = effSAR > 0 ? (effSAR * item.rate).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00";
-                    displayRightVal = `₹ ${totalINR}`;
+                    displayRightVal = `Rs. ${totalINR}`;
                 } else {
                     const requiredSAR = inputVal > 0 ? ((inputVal / item.rate) + item.fee).toFixed(2) : "0.00";
                     displayRightVal = `${requiredSAR} SAR`;
@@ -558,7 +559,12 @@
             showHome();
         }
 
-        // Rate Alert Logic (Specific Bank or All Banks)
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        }
+
         function saveRateAlert() {
             const bank = document.getElementById('alert-bank-select').value;
             const targetRate = parseFloat(document.getElementById('target-rate-val').value);
@@ -584,7 +590,7 @@
             box.innerHTML = '<h3 class="font-bold text-gray-700 mt-2">Active Alerts:</h3>';
             alerts.forEach((alertObj, index) => {
                 box.innerHTML += `<div class="bg-gray-50 border p-1.5 rounded flex justify-between items-center text-[11px]">
-                    <span>Target: <b>₹ ${alertObj.targetRate}</b> (${alertObj.bank})</span>
+                    <span>Target: <b>Rs. ${alertObj.targetRate}</b> (${alertObj.bank})</span>
                     <button onclick="window.removeAlert(${index})" class="text-red-500 font-bold">Delete</button>
                 </div>`;
             });
@@ -597,23 +603,65 @@
             loadAlerts();
         };
 
+        function checkRateAlerts() {
+            let alerts = JSON.parse(localStorage.getItem('nammaRateAlerts')) || [];
+            if (alerts.length === 0 || Object.keys(remittanceDataObj).length === 0) return;
+
+            alerts.forEach((alertObj, index) => {
+                let isTriggered = false;
+
+                if (alertObj.bank === "ALL") {
+                    Object.values(remittanceDataObj).forEach(item => {
+                        if (item.rate >= alertObj.targetRate) {
+                            isTriggered = true;
+                        }
+                    });
+                } else {
+                    Object.values(remittanceDataObj).forEach(item => {
+                        if (item.name === alertObj.bank && item.rate >= alertObj.targetRate) {
+                            isTriggered = true;
+                        }
+                    });
+                }
+
+                if (isTriggered) {
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification("ðŸŽ¯ Namma Rate Alert!", {
+                            body: `Target reached! Rate is now Rs. ${alertObj.targetRate} or more for ${alertObj.bank}.`,
+                            icon: "https://i.postimg.cc/s28C4MwY/images.jpg"
+                        });
+                    } else {
+                        alert(`ðŸŽ¯ Rate Alert! Target of Rs. ${alertObj.targetRate} reached for ${alertObj.bank}!`);
+                    }
+                }
+            });
+        }
+
         function renderAdminBanks() {
             const box = document.getElementById('admin-banks-list');
             if (!box) return;
             box.innerHTML = '';
             Object.keys(remittanceDataObj).forEach(k => {
                 const item = remittanceDataObj[k];
-                box.innerHTML += `<div class="bg-gray-800 p-1.5 rounded space-y-1 border border-gray-700">
+                box.innerHTML += `<div class="bg-gray-800 p-2.5 rounded-xl space-y-2 border border-gray-700 shadow-inner">
                     <div class="flex justify-between items-center">
-                        <span class="text-yellow-300 font-bold text-[11px]">${item.name}</span>
-                        <span class="text-[9px] text-gray-400">(${formatTimeAgo(item.timestamp)})</span>
+                        <span class="text-yellow-300 font-bold text-xs">${item.name}</span>
+                        <span class="text-[10px] text-gray-400 font-medium">${formatTimeAgo(item.timestamp)}</span>
                     </div>
-                    <div class="flex gap-1.5 items-center">
-                        <input type="number" step="0.001" id="rate_${k}" value="${item.rate}" disabled class="w-1/2 p-1 text-black bg-gray-200 rounded text-xs">
-                        <input type="number" step="0.01" id="fee_${k}" value="${item.fee}" disabled class="w-1/3 p-1 text-black bg-gray-200 rounded text-xs">
-                        <button onclick="window.enableEdit('${k}')" id="ed_${k}" class="bg-yellow-500 text-black px-1.5 py-0.5 rounded font-bold text-[10px]">Edit</button>
-                        <button onclick="window.saveEdit('${k}')" id="sv_${k}" class="hidden bg-blue-600 text-white px-1.5 py-0.5 rounded font-bold text-[10px]">Save</button>
-                        <button onclick="window.delBank('${k}')" class="bg-red-600 text-white px-1.5 py-0.5 rounded font-bold text-[10px]">Del</button>
+                    <div class="flex gap-2 items-center">
+                        <div class="w-1/2 flex flex-col">
+                            <span class="text-[9px] text-gray-400 mb-0.5">Rate (INR)</span>
+                            <input type="number" step="0.001" id="rate_${k}" value="${item.rate}" disabled class="w-full p-1.5 text-black bg-gray-200 rounded font-bold text-xs focus:bg-white transition-all">
+                        </div>
+                        <div class="w-1/3 flex flex-col">
+                            <span class="text-[9px] text-gray-400 mb-0.5">Fee (SAR)</span>
+                            <input type="number" step="0.01" id="fee_${k}" value="${item.fee}" disabled class="w-full p-1.5 text-black bg-gray-200 rounded font-bold text-xs focus:bg-white transition-all">
+                        </div>
+                        <div class="w-1/6 flex items-end h-full pt-4 gap-1">
+                            <button onclick="window.enableEdit('${k}')" id="ed_${k}" class="bg-yellow-500 hover:bg-yellow-400 text-black px-2 py-1.5 rounded font-bold text-[10px] shadow">Edit</button>
+                            <button onclick="window.saveEdit('${k}')" id="sv_${k}" class="hidden bg-blue-600 hover:bg-blue-500 text-white px-2 py-1.5 rounded font-bold text-[10px] shadow">Save</button>
+                            <button onclick="window.delBank('${k}')" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1.5 rounded font-bold text-[10px] shadow">Del</button>
+                        </div>
                     </div>
                 </div>`;
             });
@@ -644,19 +692,19 @@
             const box = document.getElementById('admin-pending-list');
             if (!box) return;
             if (pendingSubmissions.length === 0) {
-                box.innerHTML = '<p class="text-gray-400 text-[10px]">No pending submissions.</p>';
+                box.innerHTML = '<p class="text-gray-400 text-xs">No pending submissions.</p>';
                 return;
             }
             box.innerHTML = '';
             pendingSubmissions.forEach(sub => {
-                box.innerHTML += `<div class="flex justify-between items-center bg-gray-800 p-1.5 rounded text-xs">
+                box.innerHTML += `<div class="flex justify-between items-center bg-gray-800 p-2.5 rounded-xl text-xs border border-gray-700">
                     <div>
-                        <span>${sub.bank}: <b>₹ ${sub.rate}</b> (Fee: ${sub.fee})</span>
-                        <div class="text-[9px] text-gray-400">Time: ${formatTimeAgo(sub.timestamp)}</div>
+                        <span class="font-bold text-gray-200">${sub.bank}</span>: <b class="text-green-400">Rs. ${sub.rate}</b> <span class="text-gray-400">(Fee: ${sub.fee})</span>
+                        <div class="text-[9px] text-gray-400 mt-0.5">Time: ${formatTimeAgo(sub.timestamp)}</div>
                     </div>
-                    <div class="space-x-1">
-                        <button onclick="window.approveSub('${sub.id}', '${sub.bank}', ${sub.rate}, ${sub.fee})" class="bg-green-600 px-1.5 py-0.5 rounded font-bold text-[10px] text-white">Approve</button>
-                        <button onclick="window.rejectSub('${sub.id}')" class="bg-red-600 px-1.5 py-0.5 rounded font-bold text-[10px] text-white">X</button>
+                    <div class="space-x-1 flex">
+                        <button onclick="window.approveSub('${sub.id}', '${sub.bank}', ${sub.rate}, ${sub.fee})" class="bg-green-600 hover:bg-green-500 px-2.5 py-1 rounded font-bold text-[10px] text-white shadow">Approve</button>
+                        <button onclick="window.rejectSub('${sub.id}')" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-[10px] text-white shadow">X</button>
                     </div>
                 </div>`;
             });
