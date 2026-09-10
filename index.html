@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EC4SPEY0ZP"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EC4SPEY0ZP"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-EC4SPEY0ZP');
 </script>
     <meta charset="UTF-8">
@@ -80,18 +79,22 @@
             </div>
         </section>
 
-        <!-- 2. View Rates -->
+        <!-- 2. View Rates (Now with 3 Tabs: With Fees | Without Fees | Offers) -->
         <section id="rates-section" class="hidden-section space-y-2">
-            <div class="grid grid-cols-2 gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200">
-                <button id="btn-mode-with-fees" class="py-1.5 px-2 text-xs font-bold rounded bg-blue-600 text-white transition-all">With Fees</button>
-                <button id="btn-mode-without-fees" class="py-1.5 px-2 text-xs font-bold rounded bg-gray-100 text-gray-700 transition-all">Without Fees</button>
+            <div class="grid grid-cols-3 gap-1 bg-white p-1.5 rounded-lg shadow-sm border border-gray-200">
+                <button id="btn-mode-with-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center">With Fees</button>
+                <button id="btn-mode-without-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Without Fees</button>
+                <button id="btn-mode-offers" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Offers 🔥</button>
             </div>
 
-            <div class="text-[10px] text-gray-500 bg-amber-50 border border-amber-200 p-1.5 rounded text-center font-medium">
+            <div id="disclaimer-box" class="text-[10px] text-gray-500 bg-amber-50 border border-amber-200 p-1.5 rounded text-center font-medium">
                 Rates shown here are provided by users. Correctness is not guaranteed.
             </div>
 
             <div id="full-rates-list" class="space-y-1"></div>
+            
+            <!-- Offers Container (Hidden by default, shown when Offers tab is clicked) -->
+            <div id="offers-container" class="hidden-section space-y-2"></div>
         </section>
 
         <!-- 3. Calculate Section -->
@@ -180,6 +183,30 @@
                 </div>
             </div>
 
+            <!-- Admin Panel Offer Addition / Editing Form -->
+            <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
+                <h3 id="offer-form-title" class="text-xs font-bold text-yellow-300 uppercase tracking-wider">Add New Offer</h3>
+                <input type="hidden" id="edit-offer-id" value="">
+                <input type="text" id="offer-bank" placeholder="Bank / Remit Name (e.g. Enjaz)" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
+                <input type="text" id="offer-title" placeholder="Offer Title (e.g. Zero Transfer Fee)" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
+                <textarea id="offer-desc" placeholder="Offer Description..." class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none"></textarea>
+                <input type="text" id="offer-code" placeholder="Promo Code (Optional)" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
+                <div>
+                    <label class="text-[10px] text-gray-400">Expiry Date (Leave blank for lifetime)</label>
+                    <input type="date" id="offer-expiry" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none mt-0.5">
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-submit-offer" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded text-xs font-bold shadow text-white">Publish Offer</button>
+                    <button id="btn-cancel-offer-edit" class="hidden bg-gray-600 hover:bg-gray-500 w-1/3 py-2 rounded text-xs font-bold shadow text-white">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Manage Offers List -->
+            <div class="space-y-2">
+                <h3 class="text-xs font-bold text-gray-200 uppercase tracking-wider">Manage Offers</h3>
+                <div id="admin-offers-list" class="space-y-2 text-xs max-h-48 overflow-y-auto pr-1"></div>
+            </div>
+
             <div class="space-y-2">
                 <h3 class="text-xs font-bold text-gray-200 uppercase tracking-wider">Manage Rates</h3>
                 <div id="admin-banks-list" class="space-y-2 text-xs max-h-72 overflow-y-auto pr-1"></div>
@@ -201,7 +228,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
-        // ======= UNGALODA ORIGINAL FIREBASE CONFIG-AI INGE PODUNGA 
+        // ======= FIREBASE CONFIGURATION =======
         const firebaseConfig = {
   apiKey: "AIzaSyCsfB2U4KjGW18cpCkeyZzmQOZSF6sy6j4",
   authDomain: "nammarate-c06eb.firebaseapp.com",
@@ -211,17 +238,17 @@
   messagingSenderId: "901213476464",
   appId: "1:901213476464:web:be54d407586119078586b5"
 };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const auth = firebase.auth();
-        // ================================================================
+        // ======================================
 
         let remittanceDataObj = {};
         let pendingSubmissions = [];
+        let offersDataList = [];
         let liveSARtoINR = null; 
         let calcMode = 'SAR';
-        let viewFeesMode = 'WITH';
+        let viewFeesMode = 'WITH'; // 'WITH', 'WITHOUT', 'OFFERS'
 
         function formatTimeAgo(timestamp) {
             if (!timestamp) return "N/A";
@@ -263,7 +290,7 @@
                     liveSARtoINR = data.rate;
                     if (rateElem) rateElem.innerText = 'Rs. ' + liveSARtoINR.toFixed(3);
                     if (timeElem) timeElem.innerText = 'Last update: ' + formatTimeAgo(Date.now());
-                    renderRates();
+                    if (viewFeesMode !== 'OFFERS') renderRates();
                 } else {
                     throw new Error("Invalid API Data");
                 }
@@ -277,15 +304,30 @@
 
         db.ref('remittanceData').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                remittanceDataObj = data;
-            } else {
-                remittanceDataObj = {};
-            }
-            renderRates();
+            remittanceDataObj = data || {};
+            if (viewFeesMode !== 'OFFERS') renderRates();
             populateBankDropdown();
             renderAdminBanks();
             checkRateAlerts();
+        });
+
+        // Firebase Sync for Offers (Filtering out expired offers automatically)
+        db.ref('offersData').on('value', (snapshot) => {
+            const data = snapshot.val();
+            offersDataList = [];
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            if (data) {
+                Object.keys(data).forEach(k => {
+                    const offerObj = { id: k, ...data[k] };
+                    if (offerObj.expiry && offerObj.expiry < todayStr) {
+                        return; // Skip expired offers for users
+                    }
+                    offersDataList.push(offerObj);
+                });
+            }
+            if (viewFeesMode === 'OFFERS') renderOffers();
+            renderAdminOffers();
         });
 
         db.ref('pendingSubmissions').on('value', (snapshot) => {
@@ -299,18 +341,38 @@
             renderAdminPending();
         });
 
+        // Tab Event Listeners
         document.getElementById('btn-mode-with-fees').onclick = () => {
             viewFeesMode = 'WITH';
-            document.getElementById('btn-mode-with-fees').className = "py-1.5 px-2 text-xs font-bold rounded bg-blue-600 text-white transition-all";
-            document.getElementById('btn-mode-without-fees').className = "py-1.5 px-2 text-xs font-bold rounded bg-gray-100 text-gray-700 transition-all";
+            document.getElementById('btn-mode-with-fees').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center";
+            document.getElementById('btn-mode-without-fees').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center";
+            document.getElementById('btn-mode-offers').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center";
+            document.getElementById('full-rates-list').classList.remove('hidden-section');
+            document.getElementById('disclaimer-box').classList.remove('hidden-section');
+            document.getElementById('offers-container').classList.add('hidden-section');
             renderRates();
         };
 
         document.getElementById('btn-mode-without-fees').onclick = () => {
             viewFeesMode = 'WITHOUT';
-            document.getElementById('btn-mode-without-fees').className = "py-1.5 px-2 text-xs font-bold rounded bg-blue-600 text-white transition-all";
-            document.getElementById('btn-mode-with-fees').className = "py-1.5 px-2 text-xs font-bold rounded bg-gray-100 text-gray-700 transition-all";
+            document.getElementById('btn-mode-without-fees').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center";
+            document.getElementById('btn-mode-with-fees').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center";
+            document.getElementById('btn-mode-offers').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center";
+            document.getElementById('full-rates-list').classList.remove('hidden-section');
+            document.getElementById('disclaimer-box').classList.remove('hidden-section');
+            document.getElementById('offers-container').classList.add('hidden-section');
             renderRates();
+        };
+
+        document.getElementById('btn-mode-offers').onclick = () => {
+            viewFeesMode = 'OFFERS';
+            document.getElementById('btn-mode-offers').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center";
+            document.getElementById('btn-mode-with-fees').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center";
+            document.getElementById('btn-mode-without-fees').className = "py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center";
+            document.getElementById('full-rates-list').classList.add('hidden-section');
+            document.getElementById('disclaimer-box').classList.add('hidden-section');
+            document.getElementById('offers-container').classList.remove('hidden-section');
+            renderOffers();
         };
 
         document.getElementById('btn-sar-mode').onclick = () => {
@@ -347,20 +409,14 @@
         };
         
         document.getElementById('btn-share').onclick = () => {
-            const shareText = "Check live Saudi Riyal (SAR to INR) transfer rates: " + window.location.href;
+            const shareText = "Check live Saudi Riyal (SAR to INR) transfer rates and active bank offers: " + window.location.href;
             if (navigator.share) {
-                navigator.share({
-                    title: 'Namma Rate',
-                    text: shareText,
-                    url: window.location.href,
-                }).catch(() => {});
+                navigator.share({ title: 'Namma Rate', text: shareText, url: window.location.href }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareText).then(() => {
-                    alert("App link copied! You can now paste it in WhatsApp or anywhere.");
+                    alert("App link copied!");
                     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(shareText), "_blank");
-                }).catch(() => {
-                    alert("Share link: " + window.location.href);
-                });
+                }).catch(() => {});
             }
         };
 
@@ -368,6 +424,8 @@
         document.getElementById('btn-submit-rate').onclick = submitNewRate;
         document.getElementById('btn-save-alert').onclick = saveRateAlert;
         document.getElementById('btn-add-bank').onclick = addNewBank;
+        document.getElementById('btn-submit-offer').onclick = submitOrUpdateOffer;
+        document.getElementById('btn-cancel-offer-edit').onclick = resetOfferForm;
         document.getElementById('btn-cancel-login').onclick = showHome;
         document.getElementById('btn-logout-admin').onclick = () => auth.signOut().then(() => { alert("Logged out successfully!"); showHome(); });
 
@@ -410,7 +468,7 @@
             document.getElementById('back-btn').classList.remove('hidden');
             if (id === 'rates-section') {
                 fetchGoogleRate();
-                renderRates();
+                if (viewFeesMode !== 'OFFERS') renderRates();
             }
             if (id === 'calculate-section') calculateRates();
         }
@@ -457,6 +515,53 @@
             alert("Bank added successfully!");
         }
 
+        function submitOrUpdateOffer() {
+            const editId = document.getElementById('edit-offer-id').value;
+            const bank = document.getElementById('offer-bank').value.trim();
+            const title = document.getElementById('offer-title').value.trim();
+            const desc = document.getElementById('offer-desc').value.trim();
+            const code = document.getElementById('offer-code').value.trim();
+            const expiry = document.getElementById('offer-expiry').value;
+
+            if (!bank || !title || !desc) {
+                return alert("Please fill all required fields (Bank, Title, Description)!");
+            }
+
+            const offerData = {
+                bank,
+                title,
+                desc,
+                code: code || "",
+                expiry: expiry || "",
+                bg: "bg-white border-blue-200",
+                timestamp: Date.now()
+            };
+
+            if (editId) {
+                db.ref('offersData/' + editId).update(offerData).then(() => {
+                    alert("Offer updated successfully!");
+                    resetOfferForm();
+                });
+            } else {
+                db.ref('offersData').push(offerData).then(() => {
+                    alert("Offer published successfully!");
+                    resetOfferForm();
+                });
+            }
+        }
+
+        function resetOfferForm() {
+            document.getElementById('edit-offer-id').value = '';
+            document.getElementById('offer-bank').value = '';
+            document.getElementById('offer-title').value = '';
+            document.getElementById('offer-desc').value = '';
+            document.getElementById('offer-code').value = '';
+            document.getElementById('offer-expiry').value = '';
+            document.getElementById('offer-form-title').innerText = "Add New Offer";
+            document.getElementById('btn-submit-offer').innerText = "Publish Offer";
+            document.getElementById('btn-cancel-offer-edit').classList.add('hidden');
+        }
+
         function renderRates() {
             const list = document.getElementById('full-rates-list');
             if (!list) return;
@@ -500,6 +605,56 @@
                 </div>`;
             });
         }
+
+        function renderOffers() {
+            const container = document.getElementById('offers-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (offersDataList.length === 0) {
+                container.innerHTML = `<div class="bg-white p-4 rounded-xl text-center text-xs text-gray-500 border border-gray-200">No active offers available right now.</div>`;
+                return;
+            }
+
+            offersDataList.forEach(offer => {
+                const bgClass = offer.bg || 'bg-white border-gray-200';
+                let codeSection = '';
+                if (offer.code) {
+                    codeSection = `
+                    <div class="flex items-center justify-between bg-white border border-dashed border-gray-300 rounded p-1.5 mt-2">
+                        <div class="flex space-x-2 text-xs">
+                            <span class="text-gray-400">Promo code</span>
+                            <span class="font-bold text-black">${offer.code}</span>
+                        </div>
+                        <button onclick="copyPromoCode('${offer.code}')" class="text-[11px] text-blue-600 font-bold flex items-center gap-1 hover:underline">
+                            📋 Tap to Copy
+                        </button>
+                    </div>`;
+                } else {
+                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium">ℹ️ No code required / Auto applied</div>`;
+                }
+
+                let expiryTag = offer.expiry ? `<span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-semibold">Expires: ${offer.expiry}</span>` : '';
+
+                container.innerHTML += `
+                <div class="${bgClass} border p-3 rounded-xl shadow-sm space-y-1 mb-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xs text-gray-900">${offer.bank} | ${offer.title}</span>
+                        ${expiryTag}
+                    </div>
+                    <p class="text-xs text-gray-700">${offer.desc}</p>
+                    ${codeSection}
+                </div>`;
+            });
+        }
+
+        window.copyPromoCode = function(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert(`Promo code "${code}" copied successfully!`);
+            }).catch(() => {
+                alert(`Promo code: ${code}`);
+            });
+        };
 
         function calculateRates() {
             const inputVal = parseFloat(document.getElementById('calc-input').value) || 0;
@@ -620,20 +775,15 @@
             let alerts = JSON.parse(localStorage.getItem('nammaRateAlerts')) || [];
             if (alerts.length === 0 || Object.keys(remittanceDataObj).length === 0) return;
 
-            alerts.forEach((alertObj, index) => {
+            alerts.forEach((alertObj) => {
                 let isTriggered = false;
-
                 if (alertObj.bank === "ALL") {
                     Object.values(remittanceDataObj).forEach(item => {
-                        if (item.rate >= alertObj.targetRate) {
-                            isTriggered = true;
-                        }
+                        if (item.rate >= alertObj.targetRate) isTriggered = true;
                     });
                 } else {
                     Object.values(remittanceDataObj).forEach(item => {
-                        if (item.name === alertObj.bank && item.rate >= alertObj.targetRate) {
-                            isTriggered = true;
-                        }
+                        if (item.name === alertObj.bank && item.rate >= alertObj.targetRate) isTriggered = true;
                     });
                 }
 
@@ -643,8 +793,6 @@
                             body: `Target reached! Rate is now Rs. ${alertObj.targetRate} or more for ${alertObj.bank}.`,
                             icon: "https://i.postimg.cc/s28C4MwY/images.jpg"
                         });
-                    } else {
-                        alert(`🎯 Rate Alert! Target of Rs. ${alertObj.targetRate} reached for ${alertObj.bank}!`);
                     }
                 }
             });
@@ -701,6 +849,58 @@
             if (confirm("Are you sure you want to delete this bank?")) db.ref('remittanceData/' + k).remove();
         };
 
+        function renderAdminOffers() {
+            const box = document.getElementById('admin-offers-list');
+            if (!box) return;
+            
+            db.ref('offersData').once('value', snapshot => {
+                const allData = snapshot.val();
+                if (!allData) {
+                    box.innerHTML = '<p class="text-gray-400 text-xs">No active offers.</p>';
+                    return;
+                }
+                box.innerHTML = '';
+                Object.keys(allData).forEach(id => {
+                    const offer = allData[id];
+                    const safeBank = (offer.bank || '').replace(/'/g, "\\'");
+                    const safeTitle = (offer.title || '').replace(/'/g, "\\'");
+                    const safeDesc = (offer.desc || '').replace(/'/g, "\\'");
+                    const safeCode = (offer.code || '').replace(/'/g, "\\'");
+                    const safeExpiry = (offer.expiry || '').replace(/'/g, "\\'");
+
+                    box.innerHTML += `<div class="bg-gray-800 p-2 rounded-xl flex justify-between items-center text-xs border border-gray-700 mb-1">
+                        <div class="truncate pr-2">
+                            <span class="font-bold text-yellow-300">${offer.bank}</span>: <span class="text-gray-200">${offer.title}</span>
+                            ${offer.expiry ? `<span class="text-[9px] text-red-400 block">Exp: ${offer.expiry}</span>` : ''}
+                        </div>
+                        <div class="space-x-1 flex flex-shrink-0">
+                            <button onclick="window.editOffer('${id}', '${safeBank}', '${safeTitle}', '${safeDesc}', '${safeCode}', '${safeExpiry}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-2 py-1 rounded font-bold text-[10px]">Edit</button>
+                            <button onclick="window.delOffer('${id}')" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded font-bold text-[10px]">Del</button>
+                        </div>
+                    </div>`;
+                });
+            });
+        }
+
+        window.editOffer = (id, bank, title, desc, code, expiry) => {
+            document.getElementById('edit-offer-id').value = id;
+            document.getElementById('offer-bank').value = bank;
+            document.getElementById('offer-title').value = title;
+            document.getElementById('offer-desc').value = desc;
+            document.getElementById('offer-code').value = code;
+            document.getElementById('offer-expiry').value = expiry;
+            document.getElementById('offer-form-title').innerText = "Edit Offer";
+            document.getElementById('btn-submit-offer').innerText = "Update Offer";
+            document.getElementById('btn-cancel-offer-edit').classList.remove('hidden');
+            document.getElementById('offer-bank').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.delOffer = id => {
+            if (confirm("Are you sure you want to delete this offer?")) {
+                db.ref('offersData/' + id).remove();
+            }
+        };
+
         function renderAdminPending() {
             const box = document.getElementById('admin-pending-list');
             if (!box) return;
@@ -726,13 +926,9 @@
         window.approveSub = (id, bankName, rate, fee) => {
             let spaceKey = "";
             Object.keys(remittanceDataObj).forEach(k => {
-                if (remittanceDataObj[k].name === bankName) {
-                    spaceKey = k;
-                }
+                if (remittanceDataObj[k].name === bankName) spaceKey = k;
             });
-            if (!spaceKey) {
-                spaceKey = bankName.replace(/[^a-zA-Z0-9]/g, '_');
-            }
+            if (!spaceKey) spaceKey = bankName.replace(/[^a-zA-Z0-9]/g, '_');
             db.ref('remittanceData/' + spaceKey).update({ name: bankName, rate, fee, timestamp: Date.now() });
             db.ref('pendingSubmissions/' + id).remove();
             alert("Rate approved and updated live!");
