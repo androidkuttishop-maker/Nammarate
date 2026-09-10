@@ -82,9 +82,9 @@
         <!-- 2. View Rates (Now with 3 Tabs: With Fees | Without Fees | Offers) -->
         <section id="rates-section" class="hidden-section space-y-2">
             <div class="grid grid-cols-3 gap-1 bg-white p-1.5 rounded-lg shadow-sm border border-gray-200">
-                <button id="btn-mode-with-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center">With Fees</button>
-                <button id="btn-mode-without-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Without Fees</button>
-                <button id="btn-mode-offers" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Offers 🔥</button>
+                <button id="btn-mode-with-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center">Best Value</button>
+                <button id="btn-mode-without-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Top Rate</button>
+                <button id="btn-mode-offers" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Offers ðŸ”¥</button>
             </div>
 
             <div id="disclaimer-box" class="text-[10px] text-gray-500 bg-amber-50 border border-amber-200 p-1.5 rounded text-center font-medium">
@@ -160,7 +160,7 @@
             </div>
             <div>
                 <label class="text-[10px] text-gray-500">Password</label>
-                <input type="password" id="admin-password" placeholder="••••••••" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+                <input type="password" id="admin-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" class="w-full border p-1.5 rounded mt-0.5 text-xs">
             </div>
             <div class="flex gap-2">
                 <button id="btn-firebase-login" class="w-full bg-blue-600 text-white py-1.5 rounded font-bold text-xs">Login</button>
@@ -627,11 +627,11 @@
                             <span class="font-bold text-black">${offer.code}</span>
                         </div>
                         <button onclick="copyPromoCode('${offer.code}')" class="text-[11px] text-blue-600 font-bold flex items-center gap-1 hover:underline">
-                            📋 Tap to Copy
+                            ðŸ“‹ Tap to Copy
                         </button>
                     </div>`;
                 } else {
-                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium">ℹ️ No code required / Auto applied</div>`;
+                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium">â„¹ï¸ No code required / Auto applied</div>`;
                 }
 
                 let expiryTag = offer.expiry ? `<span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-semibold">Expires: ${offer.expiry}</span>` : '';
@@ -789,7 +789,7 @@
 
                 if (isTriggered) {
                     if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("🎯 Namma Rate Alert!", {
+                        new Notification("ðŸŽ¯ Namma Rate Alert!", {
                             body: `Target reached! Rate is now Rs. ${alertObj.targetRate} or more for ${alertObj.bank}.`,
                             icon: "https://i.postimg.cc/s28C4MwY/images.jpg"
                         });
