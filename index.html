@@ -242,7 +242,7 @@
     <script>
         // ======= FIREBASE CONFIGURATION =======
         const firebaseConfig = {
-  apiKey: "AIzaSyCsfB2U4KjGW18cpCkeyZzmQOZSF6sy6j4",
+        apiKey: "AIzaSyCsfB2U4KjGW18cpCkeyZzmQOZSF6sy6j4",
   authDomain: "nammarate-c06eb.firebaseapp.com",
   databaseURL: "https://nammarate-c06eb-default-rtdb.firebaseio.com",
   projectId: "nammarate-c06eb",
@@ -250,7 +250,6 @@
   messagingSenderId: "901213476464",
   appId: "1:901213476464:web:be54d407586119078586b5"
 };
- 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const auth = firebase.auth();
@@ -634,6 +633,7 @@
             });
         }
 
+        // OFFERS RENDER WITH DYNAMIC EXPIRED/ACTIVE COLOR BADGES & PRO SVG BANK ICON
         function renderOffers() {
             const container = document.getElementById('offers-container');
             if (!container) return;
@@ -647,20 +647,29 @@
             container.innerHTML = '';
 
             const today = new Date().toISOString().split('T')[0];
-            const activeOffers = offersDataList.filter(offer => {
-                if (offer.expiryDate && offer.expiryDate < today) {
-                    return false;
-                }
-                return true;
-            });
 
-            if (activeOffers.length === 0) {
-                container.innerHTML = `<div class="bg-white p-4 rounded-xl text-center text-xs text-gray-500 border border-gray-200">No active offers available right now.</div>`;
+            if (offersDataList.length === 0) {
+                container.innerHTML = `<div class="bg-white p-4 rounded-xl text-center text-xs text-gray-500 border border-gray-200">No offers available right now.</div>`;
                 return;
             }
 
-            activeOffers.forEach(offer => {
+            // Pro Level Bank SVG Icon
+            const bankSvgIcon = `<svg class="w-3.5 h-3.5 inline-block mr-1 text-blue-600 -mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v4"/><path d="M12 14v4"/><path d="M16 14v4"/></svg>`;
+
+            offersDataList.forEach(offer => {
                 const bgClass = offer.bg || 'bg-white border-gray-200';
+                
+                // Dynamic Expiry Date Logic: Green for Active, Red for Expired
+                let expiryBadge = '';
+                if (offer.expiryDate) {
+                    const isExpired = offer.expiryDate < today;
+                    const badgeStyle = isExpired 
+                        ? 'text-red-700 bg-red-100 border-red-300' 
+                        : 'text-emerald-700 bg-emerald-100 border-emerald-300';
+
+                    expiryBadge = `<span class="text-[9px] ${badgeStyle} border px-1.5 py-0.5 rounded font-bold ml-auto shrink-0">Valid till: ${offer.expiryDate}</span>`;
+                }
+
                 let codeSection = '';
                 if (offer.code) {
                     codeSection = `
@@ -674,18 +683,13 @@
                         </button>
                     </div>`;
                 } else {
-                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium">&#8505;&#65039; No code required / Auto applied</div>`;
-                }
-
-                let expiryBadge = '';
-                if (offer.expiryDate) {
-                    expiryBadge = `<span class="text-[9px] text-amber-700 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded font-bold ml-auto">Valid till: ${offer.expiryDate}</span>`;
+                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium"> &#8505;&#65039; No code required / Auto applied</div>`;
                 }
 
                 container.innerHTML += `
                 <div class="${bgClass} border p-3 rounded-xl shadow-sm space-y-1 mb-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-xs text-gray-900">${offer.bank} | ${offer.title}</span>
+                    <div class="flex justify-between items-center gap-1">
+                        <span class="font-bold text-xs text-gray-900 flex items-center truncate">${bankSvgIcon} ${offer.bank} | ${offer.title}</span>
                         ${expiryBadge}
                     </div>
                     <p class="text-xs text-gray-700">${offer.desc}</p>
@@ -915,7 +919,7 @@
 
             offersDataList.forEach(offer => {
                 const isExpired = offer.expiryDate && offer.expiryDate < today;
-                const expiredBadge = isExpired ? '<span class="text-red-400 text-[10px] font-bold ml-1">(Expired - Hidden in Live)</span>' : '';
+                const expiredBadge = isExpired ? '<span class="text-red-400 text-[10px] font-bold ml-1">(Expired)</span>' : '';
 
                 box.innerHTML += `<div class="bg-gray-800 p-2.5 rounded-xl space-y-2 border border-gray-700">
                     <!-- Normal View -->
