@@ -36,6 +36,12 @@
 
     <main class="container mx-auto p-2 max-w-md space-y-3">
 
+        <!-- Add to Home Screen Prompt Banner -->
+        <div id="pwa-install-banner" class="hidden bg-amber-100 border border-amber-300 text-amber-900 px-3 py-2 rounded-lg flex justify-between items-center text-xs shadow-sm">
+            <span class="font-medium">Add to Home Screen for fast access!</span>
+            <button id="btn-pwa-install" class="bg-blue-600 text-white font-bold px-2.5 py-1 rounded text-xs shadow">Add</button>
+        </div>
+
         <!-- 1. Home Dashboard -->
         <section id="home-section" class="space-y-3">
             <h2 class="text-xs font-bold text-gray-700 uppercase">Dashboard</h2>
@@ -79,13 +85,13 @@
             </div>
         </section>
 
-        <!-- 2. View Rates (Now with 3 Tabs: With Fees | Without Fees | Offers) -->
+        <!-- 2. View Rates (3 Tabs: Best Value | Top Rate | Offers) -->
         <section id="rates-section" class="hidden-section space-y-2">
-            <div class="grid grid-cols-3 gap-1 bg-white p-1.5 rounded-lg shadow-sm border border-gray-200">
+            <!-- Sticky tab header on scroll -->
+            <div class="sticky top-[52px] z-40 grid grid-cols-3 gap-1 bg-white p-1.5 rounded-lg shadow-sm border border-gray-200">
                 <button id="btn-mode-with-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-blue-600 text-white transition-all text-center">Best Value</button>
                 <button id="btn-mode-without-fees" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Top Rate</button>
-                <button id="btn-mode-offers" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Offers &#128293;
-</button>
+                <button id="btn-mode-offers" class="py-1.5 px-1 text-[11px] font-bold rounded bg-gray-100 text-gray-700 transition-all text-center">Offers &#128293;</button>
             </div>
 
             <div id="disclaimer-box" class="text-[10px] text-gray-500 bg-amber-50 border border-amber-200 p-1.5 rounded text-center font-medium">
@@ -94,7 +100,7 @@
 
             <div id="full-rates-list" class="space-y-1"></div>
             
-            <!-- Offers Container (Hidden by default, shown when Offers tab is clicked) -->
+            <!-- Offers Container -->
             <div id="offers-container" class="hidden-section space-y-2"></div>
         </section>
 
@@ -161,7 +167,7 @@
             </div>
             <div>
                 <label class="text-[10px] text-gray-500">Password</label>
-                <input type="password" id="admin-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" class="w-full border p-1.5 rounded mt-0.5 text-xs">
+                <input type="password" id="admin-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" class="w-full border p-1.5 rounded mt-0.5 text-xs">
             </div>
             <div class="flex gap-2">
                 <button id="btn-firebase-login" class="w-full bg-blue-600 text-white py-1.5 rounded font-bold text-xs">Login</button>
@@ -184,22 +190,14 @@
                 </div>
             </div>
 
-            <!-- Admin Panel Offer Addition / Editing Form -->
+            <!-- Admin Panel Offer Addition Form -->
             <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
-                <h3 id="offer-form-title" class="text-xs font-bold text-yellow-300 uppercase tracking-wider">Add New Offer</h3>
-                <input type="hidden" id="edit-offer-id" value="">
+                <h3 class="text-xs font-bold text-gray-200 uppercase tracking-wider">Add New Offer</h3>
                 <input type="text" id="offer-bank" placeholder="Bank / Remit Name (e.g. Enjaz)" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
                 <input type="text" id="offer-title" placeholder="Offer Title (e.g. Zero Transfer Fee)" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
                 <textarea id="offer-desc" placeholder="Offer Description..." class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none"></textarea>
                 <input type="text" id="offer-code" placeholder="Promo Code (Optional)" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none">
-                <div>
-                    <label class="text-[10px] text-gray-400">Expiry Date (Leave blank for lifetime)</label>
-                    <input type="date" id="offer-expiry" class="w-full p-2 text-xs text-black bg-white rounded font-medium focus:outline-none mt-0.5">
-                </div>
-                <div class="flex gap-2">
-                    <button id="btn-submit-offer" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded text-xs font-bold shadow text-white">Publish Offer</button>
-                    <button id="btn-cancel-offer-edit" class="hidden bg-gray-600 hover:bg-gray-500 w-1/3 py-2 rounded text-xs font-bold shadow text-white">Cancel</button>
-                </div>
+                <button id="btn-submit-offer" class="bg-blue-600 hover:bg-blue-700 w-full py-2 rounded text-xs font-bold shadow text-white">Publish Offer</button>
             </div>
 
             <!-- Manage Offers List -->
@@ -230,7 +228,7 @@
 
     <script>
         // ======= FIREBASE CONFIGURATION =======
-        const firebaseConfig = {
+           const firebaseConfig = {
   apiKey: "AIzaSyCsfB2U4KjGW18cpCkeyZzmQOZSF6sy6j4",
   authDomain: "nammarate-c06eb.firebaseapp.com",
   databaseURL: "https://nammarate-c06eb-default-rtdb.firebaseio.com",
@@ -239,17 +237,37 @@
   messagingSenderId: "901213476464",
   appId: "1:901213476464:web:be54d407586119078586b5"
 };
+ 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const auth = firebase.auth();
         // ======================================
+
+        // Add to Home Screen Prompt Logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-pwa-install')?.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    deferredPrompt = null;
+                    document.getElementById('pwa-install-banner')?.classList.add('hidden');
+                });
+            }
+        });
 
         let remittanceDataObj = {};
         let pendingSubmissions = [];
         let offersDataList = [];
         let liveSARtoINR = null; 
         let calcMode = 'SAR';
-        let viewFeesMode = 'WITH'; // 'WITH', 'WITHOUT', 'OFFERS'
+        let viewFeesMode = 'WITH'; // 'WITH' (Best Value), 'WITHOUT' (Top Rate), 'OFFERS'
 
         function formatTimeAgo(timestamp) {
             if (!timestamp) return "N/A";
@@ -312,19 +330,13 @@
             checkRateAlerts();
         });
 
-        // Firebase Sync for Offers (Filtering out expired offers automatically)
+        // Firebase Sync for Offers
         db.ref('offersData').on('value', (snapshot) => {
             const data = snapshot.val();
             offersDataList = [];
-            const todayStr = new Date().toISOString().split('T')[0];
-
             if (data) {
                 Object.keys(data).forEach(k => {
-                    const offerObj = { id: k, ...data[k] };
-                    if (offerObj.expiry && offerObj.expiry < todayStr) {
-                        return; // Skip expired offers for users
-                    }
-                    offersDataList.push(offerObj);
+                    offersDataList.push({ id: k, ...data[k] });
                 });
             }
             if (viewFeesMode === 'OFFERS') renderOffers();
@@ -425,8 +437,7 @@
         document.getElementById('btn-submit-rate').onclick = submitNewRate;
         document.getElementById('btn-save-alert').onclick = saveRateAlert;
         document.getElementById('btn-add-bank').onclick = addNewBank;
-        document.getElementById('btn-submit-offer').onclick = submitOrUpdateOffer;
-        document.getElementById('btn-cancel-offer-edit').onclick = resetOfferForm;
+        document.getElementById('btn-submit-offer').onclick = submitNewOffer;
         document.getElementById('btn-cancel-login').onclick = showHome;
         document.getElementById('btn-logout-admin').onclick = () => auth.signOut().then(() => { alert("Logged out successfully!"); showHome(); });
 
@@ -516,51 +527,31 @@
             alert("Bank added successfully!");
         }
 
-        function submitOrUpdateOffer() {
-            const editId = document.getElementById('edit-offer-id').value;
+        function submitNewOffer() {
             const bank = document.getElementById('offer-bank').value.trim();
             const title = document.getElementById('offer-title').value.trim();
             const desc = document.getElementById('offer-desc').value.trim();
             const code = document.getElementById('offer-code').value.trim();
-            const expiry = document.getElementById('offer-expiry').value;
 
             if (!bank || !title || !desc) {
                 return alert("Please fill all required fields (Bank, Title, Description)!");
             }
 
-            const offerData = {
+            db.ref('offersData').push({
                 bank,
                 title,
                 desc,
                 code: code || "",
-                expiry: expiry || "",
                 bg: "bg-white border-blue-200",
                 timestamp: Date.now()
-            };
+            });
 
-            if (editId) {
-                db.ref('offersData/' + editId).update(offerData).then(() => {
-                    alert("Offer updated successfully!");
-                    resetOfferForm();
-                });
-            } else {
-                db.ref('offersData').push(offerData).then(() => {
-                    alert("Offer published successfully!");
-                    resetOfferForm();
-                });
-            }
-        }
-
-        function resetOfferForm() {
-            document.getElementById('edit-offer-id').value = '';
             document.getElementById('offer-bank').value = '';
             document.getElementById('offer-title').value = '';
             document.getElementById('offer-desc').value = '';
             document.getElementById('offer-code').value = '';
-            document.getElementById('offer-expiry').value = '';
-            document.getElementById('offer-form-title').innerText = "Add New Offer";
-            document.getElementById('btn-submit-offer').innerText = "Publish Offer";
-            document.getElementById('btn-cancel-offer-edit').classList.add('hidden');
+            
+            alert("Offer published successfully!");
         }
 
         function renderRates() {
@@ -587,10 +578,13 @@
                 <span>Rate</span>
             </div>`;
 
+            // Dynamic badge label: "Best Price" for Best Value, "Best Rate" for Top Rate
+            const badgeText = viewFeesMode === 'WITH' ? 'Best Price' : 'Best Rate';
+
             arr.forEach((item, idx) => {
                 const bg = idx === 0 ? 'bg-green-600' : idx < 2 ? 'bg-green-600' : idx >= arr.length - 2 ? 'bg-amber-700' : 'bg-emerald-700';
                 const timeStr = formatTimeAgo(item.timestamp);
-                const bankDisplay = idx === 0 ? `${item.name} <span class="bg-yellow-300 text-black text-[9px] px-1 rounded font-bold ml-1">Best Price</span>` : item.name;
+                const bankDisplay = idx === 0 ? `${item.name} <span class="bg-yellow-300 text-black text-[9px] px-1 rounded font-bold ml-1">${badgeText}</span>` : item.name;
 
                 list.innerHTML += `<div class="${bg} text-white p-1.5 mb-1 rounded flex justify-between items-center text-xs shadow-sm">
                     <div class="w-2/5 truncate">
@@ -628,20 +622,17 @@
                             <span class="font-bold text-black">${offer.code}</span>
                         </div>
                         <button onclick="copyPromoCode('${offer.code}')" class="text-[11px] text-blue-600 font-bold flex items-center gap-1 hover:underline">
-                            ðŸ“‹ Tap to Copy
+                            &#128203; Tap to Copy
                         </button>
                     </div>`;
                 } else {
-                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium">â„¹ï¸ No code required / Auto applied</div>`;
+                    codeSection = `<div class="text-[11px] text-gray-500 mt-2 font-medium">&#8505;&#65039; No code required / Auto applied</div>`;
                 }
-
-                let expiryTag = offer.expiry ? `<span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-semibold">Expires: ${offer.expiry}</span>` : '';
 
                 container.innerHTML += `
                 <div class="${bgClass} border p-3 rounded-xl shadow-sm space-y-1 mb-2">
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-xs text-gray-900">${offer.bank} | ${offer.title}</span>
-                        ${expiryTag}
                     </div>
                     <p class="text-xs text-gray-700">${offer.desc}</p>
                     ${codeSection}
@@ -790,7 +781,7 @@
 
                 if (isTriggered) {
                     if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("ðŸŽ¯ Namma Rate Alert!", {
+                        new Notification("Namma Rate Alert!", {
                             body: `Target reached! Rate is now Rs. ${alertObj.targetRate} or more for ${alertObj.bank}.`,
                             icon: "https://i.postimg.cc/s28C4MwY/images.jpg"
                         });
@@ -853,48 +844,20 @@
         function renderAdminOffers() {
             const box = document.getElementById('admin-offers-list');
             if (!box) return;
-            
-            db.ref('offersData').once('value', snapshot => {
-                const allData = snapshot.val();
-                if (!allData) {
-                    box.innerHTML = '<p class="text-gray-400 text-xs">No active offers.</p>';
-                    return;
-                }
-                box.innerHTML = '';
-                Object.keys(allData).forEach(id => {
-                    const offer = allData[id];
-                    const safeBank = (offer.bank || '').replace(/'/g, "\\'");
-                    const safeTitle = (offer.title || '').replace(/'/g, "\\'");
-                    const safeDesc = (offer.desc || '').replace(/'/g, "\\'");
-                    const safeCode = (offer.code || '').replace(/'/g, "\\'");
-                    const safeExpiry = (offer.expiry || '').replace(/'/g, "\\'");
-
-                    box.innerHTML += `<div class="bg-gray-800 p-2 rounded-xl flex justify-between items-center text-xs border border-gray-700 mb-1">
-                        <div class="truncate pr-2">
-                            <span class="font-bold text-yellow-300">${offer.bank}</span>: <span class="text-gray-200">${offer.title}</span>
-                            ${offer.expiry ? `<span class="text-[9px] text-red-400 block">Exp: ${offer.expiry}</span>` : ''}
-                        </div>
-                        <div class="space-x-1 flex flex-shrink-0">
-                            <button onclick="window.editOffer('${id}', '${safeBank}', '${safeTitle}', '${safeDesc}', '${safeCode}', '${safeExpiry}')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-2 py-1 rounded font-bold text-[10px]">Edit</button>
-                            <button onclick="window.delOffer('${id}')" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded font-bold text-[10px]">Del</button>
-                        </div>
-                    </div>`;
-                });
+            if (offersDataList.length === 0) {
+                box.innerHTML = '<p class="text-gray-400 text-xs">No active offers.</p>';
+                return;
+            }
+            box.innerHTML = '';
+            offersDataList.forEach(offer => {
+                box.innerHTML += `<div class="bg-gray-800 p-2 rounded-xl flex justify-between items-center text-xs border border-gray-700">
+                    <div class="truncate pr-2">
+                        <span class="font-bold text-yellow-300">${offer.bank}</span>: <span class="text-gray-200">${offer.title}</span>
+                    </div>
+                    <button onclick="window.delOffer('${offer.id}')" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded font-bold text-[10px]">Del</button>
+                </div>`;
             });
         }
-
-        window.editOffer = (id, bank, title, desc, code, expiry) => {
-            document.getElementById('edit-offer-id').value = id;
-            document.getElementById('offer-bank').value = bank;
-            document.getElementById('offer-title').value = title;
-            document.getElementById('offer-desc').value = desc;
-            document.getElementById('offer-code').value = code;
-            document.getElementById('offer-expiry').value = expiry;
-            document.getElementById('offer-form-title').innerText = "Edit Offer";
-            document.getElementById('btn-submit-offer').innerText = "Update Offer";
-            document.getElementById('btn-cancel-offer-edit').classList.remove('hidden');
-            document.getElementById('offer-bank').scrollIntoView({ behavior: 'smooth' });
-        };
 
         window.delOffer = id => {
             if (confirm("Are you sure you want to delete this offer?")) {
